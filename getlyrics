@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
-python lyrics_catcher.py $1 $2
+if mpc status | awk 'NR==2' | grep playing;
+then
+	python lyrics_catcher.py "$(mpc --format '%title%' current)|$(mpc --format '%artist%' current)"
+else
+	python lyrics_catcher.py $1 $2
+fi

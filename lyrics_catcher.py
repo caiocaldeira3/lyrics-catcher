@@ -5,12 +5,16 @@ import requests
 import sys
 
 import dataclasses as dc
+import regex as re
 import tkinter as tk
 
 from pathlib import Path
+from unidecode import unidecode
 
 base_path = Path(__file__).resolve().parent
 dotenv.load_dotenv(base_path / ".env", override=False)
+
+re_ascii_alpha = re.compile(r"^[a-zA-Z]+$", re.V1)
 
 @dc.dataclass(init=True)
 class LyricsWindow:
@@ -38,8 +42,17 @@ class LyricsWindow:
 
 def load_song():
 
-    artist = sys.argv[1]
-    music = sys.argv[2]
+    if len(sys.argv) == 2:
+        music, artist = sys.argv[1].split("|")
+
+        artist = artist[ : artist.find(",") ]
+
+        artist = unidecode(artist)
+        music = unidecode(music)
+
+    else:
+        artist = sys.argv[1]
+        music = sys.argv[2]
 
     key = os.environ["APPKEY"]
 
