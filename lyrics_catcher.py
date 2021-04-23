@@ -28,7 +28,7 @@ class LyricsWindow:
         self.root.title(self.title)
         self.root.resizable(width=True, height=True)
 
-        T = tk.Text(self.root, bg="#333")
+        T = tk.Text(self.root, bg="#333", padx=25, pady=25, font=("Linux Biolinum", 12))
 
         T.pack(expand=True, fill=tk.BOTH)
         T.tag_config("lyrics", foreground="#999")
@@ -41,25 +41,32 @@ class LyricsWindow:
 def load_song():
 
     if len(sys.argv) == 2:
-        music, artist = sys.argv[1].split("|")
+        music, artists = sys.argv[1].split("|")
 
-        artist = artist[ : artist.find(",") ]
-
-        artist = unidecode(artist)
+        artists = [ unidecode(artist.strip()) for artist in artists.split(",") ]
         music = unidecode(music)
-
     else:
-        artist = sys.argv[1]
+        artists = [ sys.argv[1] ]
         music = sys.argv[2]
 
     key = os.environ["APPKEY"]
 
-    url = f"https://api.vagalume.com.br/search.php?art={artist}&mus={music}&apikey={key}"
-    resp = requests.post(url)
+    for artist in artists:
 
-    resp_j = json.loads(resp.text)
+        url = f"https://api.vagalume.com.br/search.php?art={artist}&mus={music}&apikey={key}"
+        resp = requests.post(url)
+        try:
+            resp_json = json.loads(resp.content)
+            if resp_json["type"] != "song_not_found":
+                return resp_json["mus"][0]["text"], artist + " " + music
+        except:
+            if resp.status_code != 200:
+                print("Error with connection with Vagalume API")
+                return None
+            continue
 
-    return resp_j["mus"][0]["text"], artist + " " + music
+    print("Song not Found")
+    return None
 
 if __name__ == "__main__":
 
