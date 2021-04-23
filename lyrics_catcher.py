@@ -14,8 +14,6 @@ from unidecode import unidecode
 base_path = Path(__file__).resolve().parent
 dotenv.load_dotenv(base_path / ".env", override=False)
 
-re_ascii_alpha = re.compile(r"^[a-zA-Z]+$", re.V1)
-
 @dc.dataclass(init=True)
 class LyricsWindow:
 
