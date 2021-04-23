@@ -31,7 +31,11 @@ class LyricsWindow:
         T = tk.Text(self.root, bg="#333", padx=25, pady=25, font=("Linux Biolinum", 12))
 
         T.pack(expand=True, fill=tk.BOTH)
+
         T.tag_config("lyrics", foreground="#999")
+        T.tag_config("title", foreground="#999", font=("Linux Biolinum", 16, "bold"))
+
+        T.insert(tk.END, self.title + '\n', "title")
         T.insert(tk.END, self.lyrics, "lyrics")
 
         T.config(state=tk.DISABLED)
@@ -58,7 +62,7 @@ def load_song():
         try:
             resp_json = json.loads(resp.content)
             if resp_json["type"] != "song_not_found":
-                return resp_json["mus"][0]["text"], artist + " " + music
+                return resp_json["mus"][0]["text"], artist + " - " + music
         except:
             if resp.status_code != 200:
                 print("Error with connection with Vagalume API")
