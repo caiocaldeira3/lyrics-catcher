@@ -65,11 +65,13 @@ def load_song():
                 return None
             continue
 
-    print("Song not Found")
     return None
 
 if __name__ == "__main__":
 
-    lyrics, title = load_song()
+    try:
+        lyrics, title = load_song()
 
-    window = LyricsWindow(lyrics, title)
+        window = LyricsWindow(lyrics, title)
+    except:
+        print("Song not Found")
